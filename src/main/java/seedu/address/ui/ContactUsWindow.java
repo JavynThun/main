@@ -2,46 +2,42 @@ package seedu.address.ui;
 
 import java.util.logging.Logger;
 
+import javax.swing.plaf.synth.Region;
+
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.layout.Region;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.util.FxViewUtil;
 
-/**
- * Controller for a help page
- */
-public class HelpWindow extends UiPart<Region> {
+public class ContactUsWindow extends UiPart<Region>{
+    public static final String CONTACTUS_FILE_PATH = "/docs/ContactUs.html";//must edit tests
 
-    public static final String USERGUIDE_FILE_PATH = "/docs/UserGuide.html";
+    private static final Logger logger = LogsCenter.getLogger(ContactUsWindow.class);
+    private static final String ICON = "/images/contact_icon.png";
+    private static final String FXML = "ContactUs.fxml";
+    private static final String TITLE = "ContactUs";
 
-    private static final Logger logger = LogsCenter.getLogger(HelpWindow.class);
-    private static final String ICON = "/images/help_icon.png";
-    private static final String FXML = "HelpWindow.fxml";
-    private static final String TITLE = "Help";
-
-    @FXML
+    @javafx.fxml.FXML
     private WebView browser;
 
     private final Stage dialogStage;
 
-    public HelpWindow() {
+    public ContactUsWindow() {
         super(FXML);
-        Scene scene = new Scene(getRoot());
+        Scene scene = new Scene(getRoot()); //why cannot?
         //Null passed as the parent stage to make it non-modal.
         dialogStage = createDialogStage(TITLE, null, scene);
         dialogStage.setMaximized(true); //TODO: set a more appropriate initial size
         FxViewUtil.setStageIcon(dialogStage, ICON);
 
-        System.out.println(getClass().getResource(USERGUIDE_FILE_PATH));
-        String userGuideUrl = getClass().getResource(USERGUIDE_FILE_PATH).toString();
-        browser.getEngine().load(userGuideUrl);
+        String contactUsUrl = getClass().getResource(CONTACTUS_FILE_PATH).toString();
+        browser.getEngine().load(contactUsUrl);
     }
 
     /**
-     * Shows the help window.
+     * Shows the contactUs window.
      * @throws IllegalStateException
      * <ul>
      *     <li>
@@ -59,7 +55,7 @@ public class HelpWindow extends UiPart<Region> {
      * </ul>
      */
     public void show() {
-        logger.fine("Showing help page about the application.");
+        logger.fine("Showing contactUs page about the application.");
         dialogStage.showAndWait();
     }
 }
