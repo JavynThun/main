@@ -345,6 +345,14 @@ image::UndoRedoActivityDiagram.png[width="200"]
 **Cons:** Requires dealing with commands that have already been undone: We must remember to skip these commands. Violates Single Responsibility Principle and Separation of Concerns as `HistoryManager` now needs to do two different things. +
 // end::undoredo[]
 
+=== Remark command
+
+The remark command is used to store additional information of a specific contact if necessary.
+
+Remark command extends UndoableCommand so that it can be undone using 'undo' function.
+
+A remark can only be added separately with the add command. Thus, to add a command to a specific contact, the contact must already be present in the address book.
+
 === Logging
 
 We are using `java.util.logging` package for logging. The `LogsCenter` class is used to manage the logging levels and logging destinations.
