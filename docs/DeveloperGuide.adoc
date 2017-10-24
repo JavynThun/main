@@ -353,6 +353,8 @@ Remark command extends UndoableCommand so that it can be undone using 'undo' fun
 
 A remark can only be added separately with the add command. Thus, to add a command to a specific contact, the contact must already be present in the address book.
 
+All the user need to do is to specify the index of the person in the list and type in the string of remark along with it's prefix.
+
 === Logging
 
 We are using `java.util.logging` package for logging. The `LogsCenter` class is used to manage the logging levels and logging destinations.
