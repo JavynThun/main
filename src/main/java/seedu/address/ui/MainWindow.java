@@ -217,6 +217,7 @@ public class MainWindow extends UiPart<Region> {
 
     void releaseResources() {
         browserPanel.freeResources();
+        profilePanel.freeResources();
     }
 
     @Subscribe

@@ -1,6 +1,10 @@
 package seedu.address.ui;
 
+import java.net.URL;
+import java.util.logging.Logger;
+
 import com.google.common.eventbus.Subscribe;
+
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -11,20 +15,19 @@ import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.events.ui.PersonPanelSelectionChangedEvent;
 import seedu.address.model.person.ReadOnlyPerson;
 
-import java.net.URL;
-import java.util.logging.Logger;
-
+/**
+ * The Profile Panel of the App.
+ */
 public class ProfilePanel extends UiPart<Region> {
-    public static final String DEFAULT_PAGE = "default.html";
-    public static final String GOOGLE_SEARCH_URL_PREFIX = "https://www.google.com.sg/search?safe=off&q=";
-    public static final String GOOGLE_SEARCH_URL_SUFFIX = "&cad=h";
+    public static final String DEFAULT_PAGE = "default_profile.html";
+    public static final String HTML_SUFFIX = ".html";
 
-    private static final String FXML = "BrowserPanel.fxml";
+    private static final String FXML = "ProfilePanel.fxml";
 
     private final Logger logger = LogsCenter.getLogger(this.getClass());
 
     @javafx.fxml.FXML
-    private WebView browser;
+    private WebView profile;
 
     public ProfilePanel() {
         super(FXML);
@@ -37,13 +40,12 @@ public class ProfilePanel extends UiPart<Region> {
     }
 
     private void loadPersonProfile(ReadOnlyPerson person) {
-        loadPage(GOOGLE_SEARCH_URL_PREFIX + person.getName().fullName.replaceAll(" ", "+")
-                + " Facebook "
-                + GOOGLE_SEARCH_URL_SUFFIX);
+        URL defaultPage = MainApp.class.getResource(FXML_FILE_FOLDER + person.getPhone().value + HTML_SUFFIX);
+        loadPage(defaultPage.toExternalForm());
     }
 
     public void loadPage(String url) {
-        Platform.runLater(() -> browser.getEngine().load(url));
+        Platform.runLater(() -> profile.getEngine().load(url));
     }
 
     /**
@@ -58,7 +60,7 @@ public class ProfilePanel extends UiPart<Region> {
      * Frees resources allocated to the browser.
      */
     public void freeResources() {
-        browser = null;
+        profile = null;
     }
 
     @Subscribe
