@@ -23,7 +23,7 @@ import seedu.address.model.person.Website;
 import seedu.address.model.tag.Tag;
 
 /**
- * Reads tsv file
+ * Class to help read tsv file
  */
 public class ContactTsvReader {
     private String contactTsvFilePath;
