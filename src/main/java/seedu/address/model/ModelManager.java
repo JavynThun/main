@@ -110,7 +110,7 @@ public class ModelManager extends ComponentManager implements Model {
                 person.getPhone().value);
 
         ProfileHtmlWriter htmlWriter = new ProfileHtmlWriter(person.getName().fullName, person.getPhone().value,
-                person.getEmail().value, person.getAddress().value, emptyField,
+                person.getEmail().value, person.getAddress().value, person.getOccupation().value,
                 person.getWebsite().value);
         try {
             htmlWriter.writeProfileHtml(templatePath, profilePath);

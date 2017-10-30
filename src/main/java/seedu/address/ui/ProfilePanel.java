@@ -40,9 +40,17 @@ public class ProfilePanel extends UiPart<Region> {
         registerAsAnEventHandler(this);
     }
 
+    /**
+     * Loads a contact profile as HTML file with a background that matches the general theme.
+     * @param person
+     */
     private void loadPersonProfile(ReadOnlyPerson person) {
         URL defaultPage = MainApp.class.getResource(PROFILE_DIRECTORY_PREFIX + person.getPhone().value + HTML_SUFFIX);
-        loadPage(defaultPage.toExternalForm());
+        try {
+            loadPage(defaultPage.toExternalForm());
+        } catch (NullPointerException npe) {
+            loadDefaultPage();
+        }
     }
 
     public void loadPage(String url) {
