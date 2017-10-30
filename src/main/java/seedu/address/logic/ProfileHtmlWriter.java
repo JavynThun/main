@@ -13,7 +13,7 @@ import java.util.ArrayDeque;
 public class ProfileHtmlWriter {
 
     public static final String DEFAULT_TEMPLATE_PATH = "src/main/resources/view/profile_template.html";
-    public static final String DEFAULT_PROFILE_PATH_FORMAT = "src/main/resources/view/profiles/%s";
+    public static final String DEFAULT_PROFILE_PATH_FORMAT = "src/main/resources/view/profiles/%s.html";
     public static final String EMPTY_FIELD = "";
 
     private ArrayDeque<String> values;
@@ -60,7 +60,7 @@ public class ProfileHtmlWriter {
                 String value = values.poll();
                 line = String.format(line, value);
             }
-            printWriter.print(line);
+            printWriter.println(line);
             i++;
         }
 

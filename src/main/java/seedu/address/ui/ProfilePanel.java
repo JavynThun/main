@@ -21,6 +21,7 @@ import seedu.address.model.person.ReadOnlyPerson;
 public class ProfilePanel extends UiPart<Region> {
     public static final String DEFAULT_PAGE = "default_profile.html";
     public static final String HTML_SUFFIX = ".html";
+    public static final String PROFILE_DIRECTORY_PREFIX = FXML_FILE_FOLDER + "profiles/";
 
     private static final String FXML = "ProfilePanel.fxml";
 
@@ -40,7 +41,7 @@ public class ProfilePanel extends UiPart<Region> {
     }
 
     private void loadPersonProfile(ReadOnlyPerson person) {
-        URL defaultPage = MainApp.class.getResource(FXML_FILE_FOLDER + person.getPhone().value + HTML_SUFFIX);
+        URL defaultPage = MainApp.class.getResource(PROFILE_DIRECTORY_PREFIX + person.getPhone().value + HTML_SUFFIX);
         loadPage(defaultPage.toExternalForm());
     }
 
@@ -52,7 +53,7 @@ public class ProfilePanel extends UiPart<Region> {
      * Loads a default HTML file with a background that matches the general theme.
      */
     private void loadDefaultPage() {
-        URL defaultPage = MainApp.class.getResource(FXML_FILE_FOLDER + DEFAULT_PAGE);
+        URL defaultPage = MainApp.class.getResource(PROFILE_DIRECTORY_PREFIX + DEFAULT_PAGE);
         loadPage(defaultPage.toExternalForm());
     }
 

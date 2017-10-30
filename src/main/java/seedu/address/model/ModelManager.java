@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
@@ -113,8 +114,11 @@ public class ModelManager extends ComponentManager implements Model {
                 person.getWebsite().value);
         try {
             htmlWriter.writeProfileHtml(templatePath, profilePath);
+            TimeUnit.MILLISECONDS.sleep(350);
         } catch (IOException io) {
             logger.info("Template not found at " + templatePath + " or Profile not found at " + profilePath);
+        } catch (InterruptedException ie) {
+            logger.info("Wait time to create profile in html was interrupted");
         }
     }
 
