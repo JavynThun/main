@@ -41,9 +41,11 @@ public class BrowserPanel extends UiPart<Region> {
         registerAsAnEventHandler(this);
     }
 
+    //@@author JavynThun
     private void loadPersonPage(ReadOnlyPerson person) {
         loadPage(person.getWebsite().toString());
     }
+    //@@author
 
     public void loadPage(String url) {
         Platform.runLater(() -> browser.getEngine().load(url));
