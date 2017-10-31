@@ -134,6 +134,11 @@ public class AddCommandTest {
         public void updateFilteredPersonList(Predicate<ReadOnlyPerson> predicate) {
             fail("This method should not be called.");
         }
+
+        @Override
+        public void createProfileHtml(ReadOnlyPerson person) {
+            fail("This method should not be called.");
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package seedu.address.model;
 
+import java.io.IOException;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
@@ -45,4 +46,9 @@ public interface Model {
      */
     void updateFilteredPersonList(Predicate<ReadOnlyPerson> predicate);
 
+    /**
+     * Create new html file that store newly added person profile
+     * @param person
+     */
+    void createProfileHtml(ReadOnlyPerson person) throws IOException;
 }
