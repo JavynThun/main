@@ -3,6 +3,8 @@ package seedu.address.model;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
@@ -12,6 +14,7 @@ import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.ComponentManager;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.events.model.AddressBookChangedEvent;
+import seedu.address.logic.ProfileHtmlWriter;
 import seedu.address.model.person.ReadOnlyPerson;
 import seedu.address.model.person.exceptions.DuplicatePersonException;
 import seedu.address.model.person.exceptions.PersonNotFoundException;
@@ -69,6 +72,7 @@ public class ModelManager extends ComponentManager implements Model {
     public synchronized void addPerson(ReadOnlyPerson person) throws DuplicatePersonException {
         addressBook.addPerson(person);
         updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+        createProfileHtml(person);
         indicateAddressBookChanged();
     }
 
@@ -96,6 +100,26 @@ public class ModelManager extends ComponentManager implements Model {
     public void updateFilteredPersonList(Predicate<ReadOnlyPerson> predicate) {
         requireNonNull(predicate);
         filteredPersons.setPredicate(predicate);
+    }
+
+    @Override
+    public void createProfileHtml(ReadOnlyPerson person) {
+        final String emptyField = ProfileHtmlWriter.EMPTY_FIELD;
+        final String templatePath = ProfileHtmlWriter.DEFAULT_TEMPLATE_PATH;
+        final String profilePath = String.format(ProfileHtmlWriter.DEFAULT_PROFILE_PATH_FORMAT,
+                person.getPhone().value);
+
+        ProfileHtmlWriter htmlWriter = new ProfileHtmlWriter(person.getName().fullName, person.getPhone().value,
+                person.getEmail().value, person.getAddress().value, person.getOccupation().value,
+                person.getWebsite().value);
+        try {
+            htmlWriter.writeProfileHtml(templatePath, profilePath);
+            TimeUnit.MILLISECONDS.sleep(350);
+        } catch (IOException io) {
+            logger.info("Template not found at " + templatePath + " or Profile not found at " + profilePath);
+        } catch (InterruptedException ie) {
+            logger.info("Wait time to create profile in html was interrupted");
+        }
     }
 
     @Override
