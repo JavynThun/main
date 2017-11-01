@@ -423,6 +423,16 @@ We will now create a 'LinkedList<Person> RecentlyDeletedQueue = new LinkedList<>
 
 In the 'RecentlyDeletedCommand' class, the commandResult method is used which will show the deleted contacts.
 
+== Remark Command
+
+Remark command lets the user enter an additional field of text to a specific contact in the Address Book. Remark command extends undo to allow user to undo the changes made to the remark.
+
+NOTE: Remark command can only be used for contacts already in the Address Book.
+
+A placeholder is then added to PersonCard which displays the remark for each person.
+
+When the user inputs a string of text into the command box, the string of text is then passed on to the AddressbookParser which calls RemarkCommandParser. This will create a new instance of RemarkCommand.
+
 === Logging
 
 We are using `java.util.logging` package for logging. The `LogsCenter` class is used to manage the logging levels and logging destinations.
