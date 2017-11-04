@@ -92,8 +92,8 @@ public class AddressBookParser {
         case FindTagCommand.COMMAND_ALIAS:
             return new FindTagCommandParser().parse(arguments);
 
-            case SortCommand.COMMAND_WORD:
-            case SortCommand.COMMAND_ALIAS:
+        case SortCommand.COMMAND_WORD:
+        case SortCommand.COMMAND_ALIAS:
             return new SortCommand();
 
         case ListCommand.COMMAND_WORD:

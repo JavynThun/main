@@ -1,9 +1,9 @@
 package seedu.address.logic.commands;
 
+import java.util.ArrayList;
+
 import seedu.address.model.Model;
 import seedu.address.model.person.ReadOnlyPerson;
-
-import java.util.ArrayList;
 
 //@@author JavynThun
 /**
