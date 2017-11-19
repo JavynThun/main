@@ -1,5 +1,105 @@
 # JavynThun
-###### \java\seedu\address\logic\commands\RemarkCommand.java
+###### /java/seedu/address/logic/parser/RemarkCommandParser.java
+``` java
+/**
+ * Parser for RemarkCommand
+ */
+public class RemarkCommandParser implements Parser<RemarkCommand> {
+
+    /**
+     * Parses the given {@code String} of arguments in the context of the RemarkCommand
+     * and returns an RemarkCommand object for execution
+     * @throws ParseException if the user input does not conform with expected format
+     */
+    public RemarkCommand parse(String args) throws ParseException {
+        requireNonNull(args);
+        ArgumentMultimap argumentMultimap = ArgumentTokenizer.tokenize(args, PREFIX_REMARK);
+
+        Index index;
+        try {
+            index = ParserUtil.parseIndex(argumentMultimap.getPreamble());
+        } catch (IllegalValueException ive) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, RemarkCommand.MESSAGE_USAGE));
+        }
+
+        String remark = argumentMultimap.getValue(PREFIX_REMARK).orElse("");
+
+        return new RemarkCommand(index, new Remark(remark));
+    }
+}
+```
+###### /java/seedu/address/logic/parser/ParserUtil.java
+``` java
+    /**
+     * Parses a {@code Optional<String> occupation} into an {@code Optional<Occupation>} if {@code occupation} is
+     * present.
+     * See header comment of this class regarding the use of {@code Optional} parameters.
+     */
+    public static Optional<Occupation> parseOccupation(Optional<String> occupation) throws IllegalValueException {
+        requireNonNull(occupation);
+        return occupation.isPresent() ? Optional.of(new Occupation(occupation.get())) : Optional.empty();
+    }
+```
+###### /java/seedu/address/logic/parser/ParserUtil.java
+``` java
+    /**
+     * Parses a {@code Optional<String> remark} into an {@code Optional<Remark>} if {@code remark} is present.
+     * See header comment of this class regarding the use of {@code Optional} parameters.
+     */
+    public static Optional<Remark> parseRemark(Optional<String> remark) throws IllegalValueException {
+        requireNonNull(remark);
+        return remark.isPresent() ? Optional.of(new Remark(remark.get())) : Optional.empty();
+    }
+
+    /**
+     * Parses a {@code Optional<String> website} into an {@code Optional<Website>} if {@code website} is present.
+     * See header comment of this class regarding the use of {@code Optional} parameters.
+     */
+    public static Optional<Website> parseWebsite(Optional<String> website) throws IllegalValueException {
+        requireNonNull(website);
+        return website.isPresent() ? Optional.of(new Website(website.get())) : Optional.empty();
+    }
+```
+###### /java/seedu/address/logic/parser/CliSyntax.java
+``` java
+    public static final Prefix PREFIX_OCCUPATION = new Prefix("o/");
+```
+###### /java/seedu/address/logic/parser/CliSyntax.java
+``` java
+    public static final Prefix PREFIX_REMARK = new Prefix("r/");
+    public static final Prefix PREFIX_WEBSITE = new Prefix("w/");
+```
+###### /java/seedu/address/logic/commands/SortCommand.java
+``` java
+/**
+ * Sorts all persons in the address book by name to the user.
+ */
+public class SortCommand extends Command {
+
+    public static final String COMMAND_WORD = "sort";
+    public static final String COMMAND_ALIAS = "s";
+    public static final String MESSAGE_SUCCESS = "List is sorted!";
+    public static final String MESSAGE_EMPTY_LIST = "List is empty!";
+
+    private ArrayList<ReadOnlyPerson> personList;
+
+    public SortCommand() {
+        personList = new ArrayList<>();
+    }
+
+    @Override
+    public CommandResult execute() {
+        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+        Boolean listSize = model.sortPersonList(personList);
+        if (listSize == null) {
+            return new CommandResult(MESSAGE_EMPTY_LIST);
+        }
+
+        return new CommandResult(MESSAGE_SUCCESS);
+    }
+}
+```
+###### /java/seedu/address/logic/commands/RemarkCommand.java
 ``` java
 /**
  *  Changes the remark of an existing person in the address book
@@ -95,131 +195,7 @@ public class RemarkCommand extends UndoableCommand {
 
 }
 ```
-###### \java\seedu\address\logic\commands\SortCommand.java
-``` java
-/**
- * Sorts all persons in the address book by name to the user.
- */
-public class SortCommand extends Command {
-
-    public static final String COMMAND_WORD = "sort";
-    public static final String COMMAND_ALIAS = "s";
-    public static final String MESSAGE_SUCCESS = "List is sorted!";
-    public static final String MESSAGE_EMPTY_LIST = "List is empty!";
-
-    private ArrayList<ReadOnlyPerson> personList;
-
-    public SortCommand() {
-        personList = new ArrayList<>();
-    }
-
-    @Override
-    public CommandResult execute() {
-        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
-        Boolean listSize = model.sortPersonList(personList);
-        if (listSize == null) {
-            return new CommandResult(MESSAGE_EMPTY_LIST);
-        }
-
-        return new CommandResult(MESSAGE_SUCCESS);
-    }
-}
-```
-###### \java\seedu\address\logic\parser\CliSyntax.java
-``` java
-    public static final Prefix PREFIX_OCCUPATION = new Prefix("o/");
-```
-###### \java\seedu\address\logic\parser\CliSyntax.java
-``` java
-    public static final Prefix PREFIX_REMARK = new Prefix("r/");
-    public static final Prefix PREFIX_WEBSITE = new Prefix("w/");
-```
-###### \java\seedu\address\logic\parser\ParserUtil.java
-``` java
-    /**
-     * Parses a {@code Optional<String> occupation} into an {@code Optional<Occupation>} if {@code occupation} is
-     * present.
-     * See header comment of this class regarding the use of {@code Optional} parameters.
-     */
-    public static Optional<Occupation> parseOccupation(Optional<String> occupation) throws IllegalValueException {
-        requireNonNull(occupation);
-        return occupation.isPresent() ? Optional.of(new Occupation(occupation.get())) : Optional.empty();
-    }
-```
-###### \java\seedu\address\logic\parser\ParserUtil.java
-``` java
-    /**
-     * Parses a {@code Optional<String> remark} into an {@code Optional<Remark>} if {@code remark} is present.
-     * See header comment of this class regarding the use of {@code Optional} parameters.
-     */
-    public static Optional<Remark> parseRemark(Optional<String> remark) throws IllegalValueException {
-        requireNonNull(remark);
-        return remark.isPresent() ? Optional.of(new Remark(remark.get())) : Optional.empty();
-    }
-
-    /**
-     * Parses a {@code Optional<String> website} into an {@code Optional<Website>} if {@code website} is present.
-     * See header comment of this class regarding the use of {@code Optional} parameters.
-     */
-    public static Optional<Website> parseWebsite(Optional<String> website) throws IllegalValueException {
-        requireNonNull(website);
-        return website.isPresent() ? Optional.of(new Website(website.get())) : Optional.empty();
-    }
-```
-###### \java\seedu\address\logic\parser\RemarkCommandParser.java
-``` java
-/**
- * Parser for RemarkCommand
- */
-public class RemarkCommandParser implements Parser<RemarkCommand> {
-
-    /**
-     * Parses the given {@code String} of arguments in the context of the RemarkCommand
-     * and returns an RemarkCommand object for execution
-     * @throws ParseException if the user input does not conform with expected format
-     */
-    public RemarkCommand parse(String args) throws ParseException {
-        requireNonNull(args);
-        ArgumentMultimap argumentMultimap = ArgumentTokenizer.tokenize(args, PREFIX_REMARK);
-
-        Index index;
-        try {
-            index = ParserUtil.parseIndex(argumentMultimap.getPreamble());
-        } catch (IllegalValueException ive) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, RemarkCommand.MESSAGE_USAGE));
-        }
-
-        String remark = argumentMultimap.getValue(PREFIX_REMARK).orElse("");
-
-        return new RemarkCommand(index, new Remark(remark));
-    }
-}
-```
-###### \java\seedu\address\model\Model.java
-``` java
-    Boolean sortPersonList(ArrayList<ReadOnlyPerson> personlist);
-
-}
-```
-###### \java\seedu\address\model\ModelManager.java
-``` java
-    @Override
-    public Boolean sortPersonList(ArrayList<ReadOnlyPerson> personlist) {
-        if (filteredPersons.isEmpty()) {
-            return false;
-        }
-        personlist.addAll(filteredPersons);
-        Collections.sort(personlist, Comparator.comparing(name -> name.toString().toLowerCase()));
-
-        try {
-            addressBook.setPersons(personlist);
-        } catch (DuplicatePersonException e) {
-            System.out.println("Address book cannot not have duplicate persons");
-        }
-        return true;
-    }
-```
-###### \java\seedu\address\model\person\Occupation.java
+###### /java/seedu/address/model/person/Occupation.java
 ``` java
 /**
  * Represents a Person's occupation in the address book.
@@ -278,55 +254,7 @@ public class Occupation {
 
 }
 ```
-###### \java\seedu\address\model\person\Person.java
-``` java
-    public void setOccupation(Occupation occupation) {
-        this.occupation.set(requireNonNull(occupation));
-    }
-
-    @Override
-    public ObjectProperty<Occupation> occupationProperty() {
-        return occupation;
-    }
-
-    @Override
-    public Occupation getOccupation() {
-        return occupation.get();
-    }
-```
-
-###### \java\seedu\address\model\person\Person.java
-``` java
-    public void setRemark(Remark remark) {
-        this.remark.set(requireNonNull(remark));
-    }
-
-    @Override
-    public ObjectProperty<Remark> remarkProperty() {
-        return remark;
-    }
-
-    @Override
-    public Remark getRemark() {
-        return remark.get();
-    }
-
-    public void setWebsite(Website website) {
-        this.website.set(requireNonNull(website));
-    }
-
-    @Override
-    public ObjectProperty<Website> websiteProperty() {
-        return website;
-    }
-
-    @Override
-    public Website getWebsite() {
-        return website.get();
-    }
-```
-###### \java\seedu\address\model\person\Remark.java
-
+###### /java/seedu/address/model/person/Remark.java
 ``` java
 /**
  *  Represents a Person's remark in the address book.
@@ -361,7 +289,53 @@ public class Remark {
     }
 }
 ```
-###### \java\seedu\address\model\person\Website.java
+###### /java/seedu/address/model/person/Person.java
+``` java
+    public void setOccupation(Occupation occupation) {
+        this.occupation.set(requireNonNull(occupation));
+    }
+
+    @Override
+    public ObjectProperty<Occupation> occupationProperty() {
+        return occupation;
+    }
+
+    @Override
+    public Occupation getOccupation() {
+        return occupation.get();
+    }
+```
+###### /java/seedu/address/model/person/Person.java
+``` java
+    public void setRemark(Remark remark) {
+        this.remark.set(requireNonNull(remark));
+    }
+
+    @Override
+    public ObjectProperty<Remark> remarkProperty() {
+        return remark;
+    }
+
+    @Override
+    public Remark getRemark() {
+        return remark.get();
+    }
+
+    public void setWebsite(Website website) {
+        this.website.set(requireNonNull(website));
+    }
+
+    @Override
+    public ObjectProperty<Website> websiteProperty() {
+        return website;
+    }
+
+    @Override
+    public Website getWebsite() {
+        return website.get();
+    }
+```
+###### /java/seedu/address/model/person/Website.java
 ``` java
 /**
  * Represents a Person's website in the address book.
@@ -419,5 +393,11 @@ public class Website {
     public int hashCode() {
         return value.hashCode();
     }
+}
+```
+###### /java/seedu/address/model/Model.java
+``` java
+    Boolean sortPersonList(ArrayList<ReadOnlyPerson> personlist);
+
 }
 ```
