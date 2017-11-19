@@ -1,4 +1,250 @@
 # vmlimshimin
+###### /java/seedu/address/logic/commands/DeleteCommand.java
+``` java
+            queue.offer(personToDelete);
+```
+###### /java/seedu/address/logic/commands/DeleteCommand.java
+``` java
+    @Override
+    public void setData(Model model, CommandHistory commandHistory,
+                        UndoRedoStack undoRedoStack, RecentlyDeletedQueue queue, String theme) {
+        this.model = model;
+        this.queue = queue;
+    }
+}
+```
+###### /java/seedu/address/logic/commands/DeleteMultipleCommand.java
+``` java
+                queue.offer(personToDelete);
+```
+###### /java/seedu/address/logic/commands/DeleteMultipleCommand.java
+``` java
+    @Override
+    public void setData(Model model, CommandHistory commandHistory,
+                        UndoRedoStack undoRedoStack, RecentlyDeletedQueue queue, String theme) {
+        this.model = model;
+        this.queue = queue;
+    }
+}
+```
+###### /java/seedu/address/logic/commands/RecentlyDeletedCommand.java
+``` java
+package seedu.address.logic.commands;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+
+import seedu.address.logic.CommandHistory;
+import seedu.address.logic.RecentlyDeletedQueue;
+import seedu.address.logic.UndoRedoStack;
+import seedu.address.model.Model;
+import seedu.address.model.person.ReadOnlyPerson;
+
+/**
+ * Shows a list of recently deleted contacts and their details, up to the last 30 contacts deleted.
+ */
+public class RecentlyDeletedCommand extends Command {
+    public static final String COMMAND_WORD = "recentlyDel";
+    public static final String COMMAND_ALIAS = "recentD";
+    public static final String MESSAGE_SUCCESS = "Listed all recently deleted:\n%1$s";
+    public static final String MESSAGE_NO_RECENTLY_DELETED = "You have not yet deleted any contacts.";
+
+    @Override
+    public CommandResult execute() {
+        LinkedList<ReadOnlyPerson> previouslyDeleted;
+        previouslyDeleted = queue.getQueue();
+
+        if (previouslyDeleted.isEmpty()) {
+            return new CommandResult(MESSAGE_NO_RECENTLY_DELETED);
+        }
+
+        Collections.reverse(previouslyDeleted);
+        LinkedList<String> deletedAsText = new LinkedList<>();
+        Iterator list = previouslyDeleted.listIterator(0);
+        //System.out.println(previouslyDeleted.size());
+        while (list.hasNext()) {
+            String personAsText = (list.next()).toString();
+            deletedAsText.add(personAsText);
+        }
+        //System.out.println(deletedAsText.size());
+        return new CommandResult(String.format(MESSAGE_SUCCESS, String.join("\n", deletedAsText)));
+    }
+
+    public void setData(Model model, CommandHistory history, UndoRedoStack undoRedoStack,
+                        RecentlyDeletedQueue queue, String theme) {
+        this.queue = queue;
+    }
+}
+```
+###### /java/seedu/address/logic/commands/ThemeCommand.java
+``` java
+package seedu.address.logic.commands;
+
+import seedu.address.commons.core.EventsCenter;
+import seedu.address.commons.events.ui.ThemeRequestEvent;
+import seedu.address.logic.CommandHistory;
+import seedu.address.logic.RecentlyDeletedQueue;
+import seedu.address.logic.UndoRedoStack;
+import seedu.address.model.Model;
+
+/**
+ * Selects a theme based on the index provided by the user, which can be referred from the themes list.
+ */
+public class ThemeCommand extends Command {
+
+    public static final String COMMAND_WORD = "theme";
+    public static final String COMMAND_ALIAS = "ct";
+
+    public static final String MESSAGE_THEME_CHANGE_SUCCESS = "Theme Changed";
+
+
+    @Override
+    public CommandResult execute() {
+
+        String newTheme = (theme.equals("DarkTheme.css")) ? "LightTheme.css" : "DarkTheme.css";
+
+        EventsCenter.getInstance().post(new ThemeRequestEvent(newTheme));
+
+        return new CommandResult(String.format(MESSAGE_THEME_CHANGE_SUCCESS, newTheme));
+
+    }
+
+
+    @Override
+    public void setData(Model model, CommandHistory history, UndoRedoStack undoRedoStack,
+                        RecentlyDeletedQueue queue, String theme) {
+        this.theme = theme;
+    }
+}
+```
+###### /java/seedu/address/logic/commands/UndoableCommand.java
+``` java
+    /**
+     * Stores the current state of {@code model#addressBook}.
+     */
+    private void saveAddressBookSnapshot() {
+        requireNonNull(model);
+        this.previousAddressBook = new AddressBook(model.getAddressBook());
+        this.previousQueue = new RecentlyDeletedQueue(queue.getQueue());
+    }
+
+```
+###### /java/seedu/address/logic/commands/UndoableCommand.java
+``` java
+    /**
+     * Reverts the AddressBook to the state before this command
+     * was executed and updates the filtered person list to
+     * show all persons.
+     */
+    protected final void undo() {
+        requireAllNonNull(model, previousAddressBook);
+        model.resetData(previousAddressBook);
+        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+        queue.setQueue(previousQueue.getQueue());
+    }
+
+```
+###### /java/seedu/address/logic/commands/UndoCommand.java
+``` java
+    @Override
+    public void setData(Model model, CommandHistory commandHistory,
+                        UndoRedoStack undoRedoStack, RecentlyDeletedQueue queue, String theme) {
+        this.model = model;
+        this.undoRedoStack = undoRedoStack;
+        this.queue = queue;
+    }
+}
+```
+###### /java/seedu/address/logic/LogicManager.java
+``` java
+    private final RecentlyDeletedQueue queue;
+    private String theme;
+
+```
+###### /java/seedu/address/logic/LogicManager.java
+``` java
+        this.queue = new RecentlyDeletedQueue();
+        this.theme = "DarkTheme.css";
+    }
+
+```
+###### /java/seedu/address/logic/LogicManager.java
+``` java
+            command.setData(model, history, undoRedoStack, queue, theme);
+            if (commandText.equals("theme")) {
+                String oldTheme = theme;
+                if (oldTheme.equals("DarkTheme.css")) {
+                    theme = "LightTheme.css";
+                } else {
+                    theme = "DarkTheme.css";
+                }
+            }
+```
+###### /java/seedu/address/logic/parser/AddressBookParser.java
+``` java
+        case RecentlyDeletedCommand.COMMAND_WORD:
+        case RecentlyDeletedCommand.COMMAND_ALIAS:
+            return new RecentlyDeletedCommand();
+
+        case ThemeCommand.COMMAND_WORD:
+        case ThemeCommand.COMMAND_ALIAS:
+            return new ThemeCommand();
+```
+###### /java/seedu/address/logic/RecentlyDeletedQueue.java
+``` java
+package seedu.address.logic;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+import seedu.address.model.person.ReadOnlyPerson;
+
+/**
+ * Maintains the Recently Deleted Queue (the list of contacts that were recently deleted,
+ * for up to 30 contacts).
+ */
+public class RecentlyDeletedQueue {
+    private Queue<ReadOnlyPerson> recentlyDeletedQueue;
+    private int count;
+
+    public RecentlyDeletedQueue() {
+        recentlyDeletedQueue = new LinkedList<>();
+        count = 0;
+    }
+
+    public RecentlyDeletedQueue(LinkedList<ReadOnlyPerson> newQueue) {
+        recentlyDeletedQueue = newQueue;
+        count = newQueue.size();
+    }
+
+    /**
+     * Offers the @param person in the queue when the @param person is deleted by
+     * {@code DeleteCommand} or {@code DeleterMultipleCommand}.
+     */
+    public void offer(ReadOnlyPerson person) {
+        if (count < 30) {
+            recentlyDeletedQueue.offer(person);
+            count++;
+        } else {
+            recentlyDeletedQueue.poll();
+            recentlyDeletedQueue.offer(person);
+        }
+    }
+
+    /**
+     * Returns the list of people in the queue.
+     */
+    public LinkedList<ReadOnlyPerson> getQueue() {
+        return new LinkedList<>(recentlyDeletedQueue);
+    }
+
+    public void setQueue(LinkedList<ReadOnlyPerson> newQueue) {
+        recentlyDeletedQueue = newQueue;
+    }
+
+}
+```
 ###### /resources/view/LightTheme.css
 ``` css
 .background {
@@ -371,335 +617,4 @@
     -fx-background-radius: 2;
     -fx-font-size: 11;
 }
-```
-###### /java/seedu/address/ui/MainWindow.java
-``` java
-    /**
-     * Selects the theme given by user input
-     */
-    public void handleSelectTheme(String theme) {
-        if (getRoot().getStylesheets().size() > 1) {
-            getRoot().getStylesheets().remove(CURRENT_THEME);
-        }
-        getRoot().getStylesheets().add("/view/" + theme);
-    }
-
-```
-###### /java/seedu/address/ui/MainWindow.java
-``` java
-    @Subscribe
-    private void handleSelectThemeEvent(ThemeRequestEvent event) {
-        logger.info(LogsCenter.getEventHandlingLogMessage(event));
-        handleSelectTheme(event.theme);
-    }
-}
-```
-###### /java/seedu/address/commons/events/ui/ThemeRequestEvent.java
-``` java
-package seedu.address.commons.events.ui;
-
-import seedu.address.commons.events.BaseEvent;
-
-/**
- * Indicates a request to change the theme.
- */
-public class ThemeRequestEvent extends BaseEvent {
-
-    public final String theme;
-
-    public ThemeRequestEvent(String theme) {
-        this.theme = theme;
-    }
-
-
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName();
-    }
-}
-```
-###### /java/seedu/address/logic/parser/AddressBookParser.java
-``` java
-        case RecentlyDeletedCommand.COMMAND_WORD:
-        case RecentlyDeletedCommand.COMMAND_ALIAS:
-            return new RecentlyDeletedCommand();
-
-        case ThemeCommand.COMMAND_WORD:
-        case ThemeCommand.COMMAND_ALIAS:
-            return new ThemeCommand();
-```
-###### /java/seedu/address/logic/commands/DeleteCommand.java
-``` java
-            queue.offer(personToDelete);
-```
-###### /java/seedu/address/logic/commands/DeleteCommand.java
-``` java
-    @Override
-    public void setData(Model model, CommandHistory commandHistory,
-                        UndoRedoStack undoRedoStack, RecentlyDeletedQueue queue, String theme) {
-        this.model = model;
-        this.queue = queue;
-    }
-}
-```
-###### /java/seedu/address/logic/commands/ThemeCommand.java
-``` java
-package seedu.address.logic.commands;
-
-import seedu.address.commons.core.EventsCenter;
-import seedu.address.commons.events.ui.ThemeRequestEvent;
-import seedu.address.logic.CommandHistory;
-import seedu.address.logic.RecentlyDeletedQueue;
-import seedu.address.logic.UndoRedoStack;
-import seedu.address.model.Model;
-
-/**
- * Selects a theme based on the index provided by the user, which can be referred from the themes list.
- */
-public class ThemeCommand extends Command {
-
-    public static final String COMMAND_WORD = "theme";
-    public static final String COMMAND_ALIAS = "ct";
-
-    public static final String MESSAGE_SWITCH_THEME_SUCCESS = "Switched Theme";
-
-
-    @Override
-    public CommandResult execute() {
-
-        String themeToChange = (theme.equals("DarkTheme.css")) ? "LightTheme.css" : "DarkTheme.css";
-
-        EventsCenter.getInstance().post(new ThemeRequestEvent(themeToChange));
-
-        return new CommandResult(String.format(MESSAGE_SWITCH_THEME_SUCCESS, themeToChange));
-
-    }
-
-
-    @Override
-    public void setData(Model model, CommandHistory history, UndoRedoStack undoRedoStack,
-                        RecentlyDeletedQueue queue, String theme) {
-        this.theme = theme;
-    }
-}
-```
-###### /java/seedu/address/logic/commands/RecentlyDeletedCommand.java
-``` java
-package seedu.address.logic.commands;
-
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import seedu.address.logic.CommandHistory;
-import seedu.address.logic.RecentlyDeletedQueue;
-import seedu.address.logic.UndoRedoStack;
-import seedu.address.model.Model;
-import seedu.address.model.person.ReadOnlyPerson;
-
-/**
- * Shows a list of recently deleted contacts and their details, up to the last 30 contacts deleted.
- */
-public class RecentlyDeletedCommand extends Command {
-    public static final String COMMAND_WORD = "recentlyDel";
-    public static final String COMMAND_ALIAS = "recentD";
-    public static final String MESSAGE_SUCCESS = "Listed all recently deleted:\n%1$s";
-    public static final String MESSAGE_NO_RECENTLY_DELETED = "You have not yet deleted any contacts.";
-
-    @Override
-    public CommandResult execute() {
-        LinkedList<ReadOnlyPerson> previouslyDeleted;
-        previouslyDeleted = queue.getQueue();
-
-        if (previouslyDeleted.isEmpty()) {
-            return new CommandResult(MESSAGE_NO_RECENTLY_DELETED);
-        }
-
-        Collections.reverse(previouslyDeleted);
-        LinkedList<String> deletedAsText = new LinkedList<>();
-        Iterator list = previouslyDeleted.listIterator(0);
-        //System.out.println(previouslyDeleted.size());
-        while (list.hasNext()) {
-            String personAsText = (list.next()).toString();
-            deletedAsText.add(personAsText);
-        }
-        //System.out.println(deletedAsText.size());
-        return new CommandResult(String.format(MESSAGE_SUCCESS, String.join("\n", deletedAsText)));
-    }
-
-    public void setData(Model model, CommandHistory history, UndoRedoStack undoRedoStack,
-                        RecentlyDeletedQueue queue, String theme) {
-        this.queue = queue;
-    }
-}
-```
-###### /java/seedu/address/logic/commands/UndoableCommand.java
-``` java
-    /**
-     * Stores the current state of {@code model#addressBook}.
-     */
-    private void saveAddressBookSnapshot() {
-        requireNonNull(model);
-        this.previousAddressBook = new AddressBook(model.getAddressBook());
-        this.previousQueue = new RecentlyDeletedQueue(queue.getQueue());
-    }
-
-```
-###### /java/seedu/address/logic/commands/UndoableCommand.java
-``` java
-    /**
-     * Reverts the AddressBook to the state before this command
-     * was executed and updates the filtered person list to
-     * show all persons.
-     */
-    protected final void undo() {
-        requireAllNonNull(model, previousAddressBook);
-        model.resetData(previousAddressBook);
-        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
-        queue.setQueue(previousQueue.getQueue());
-    }
-
-```
-###### /java/seedu/address/logic/commands/DeleteMultipleCommand.java
-``` java
-                queue.offer(personToDelete);
-```
-###### /java/seedu/address/logic/commands/DeleteMultipleCommand.java
-``` java
-    @Override
-    public void setData(Model model, CommandHistory commandHistory,
-                        UndoRedoStack undoRedoStack, RecentlyDeletedQueue queue, String theme) {
-        this.model = model;
-        this.queue = queue;
-    }
-}
-```
-###### /java/seedu/address/logic/commands/UndoCommand.java
-``` java
-    @Override
-    public void setData(Model model, CommandHistory commandHistory,
-                        UndoRedoStack undoRedoStack, RecentlyDeletedQueue queue, String theme) {
-        this.model = model;
-        this.undoRedoStack = undoRedoStack;
-        this.queue = queue;
-    }
-}
-```
-###### /java/seedu/address/logic/RecentlyDeletedQueue.java
-``` java
-package seedu.address.logic;
-
-import java.util.LinkedList;
-import java.util.Queue;
-
-import seedu.address.model.person.ReadOnlyPerson;
-
-/**
- * Maintains the Recently Deleted Queue (the list of contacts that were recently deleted,
- * for up to 30 contacts).
- */
-public class RecentlyDeletedQueue {
-    private Queue<ReadOnlyPerson> recentlyDeletedQueue;
-    private int count;
-
-    public RecentlyDeletedQueue() {
-        recentlyDeletedQueue = new LinkedList<>();
-        count = 0;
-    }
-
-    public RecentlyDeletedQueue(LinkedList<ReadOnlyPerson> newQueue) {
-        recentlyDeletedQueue = newQueue;
-        count = newQueue.size();
-    }
-
-    /**
-     * Offers the @param person in the queue when the @param person is deleted by
-     * {@code DeleteCommand} or {@code DeleterMultipleCommand}.
-     */
-    public void offer(ReadOnlyPerson person) {
-        if (count < 30) {
-            recentlyDeletedQueue.offer(person);
-            count++;
-        } else {
-            recentlyDeletedQueue.poll();
-            recentlyDeletedQueue.offer(person);
-        }
-    }
-
-    /**
-     * Returns the list of people in the queue.
-     */
-    public LinkedList<ReadOnlyPerson> getQueue() {
-        return new LinkedList<>(recentlyDeletedQueue);
-    }
-
-    public void setQueue(LinkedList<ReadOnlyPerson> newQueue) {
-        recentlyDeletedQueue = newQueue;
-    }
-
-}
-```
-###### /java/seedu/address/logic/LogicManager.java
-``` java
-    private final RecentlyDeletedQueue queue;
-    private String theme;
-
-```
-###### /java/seedu/address/logic/LogicManager.java
-``` java
-        this.queue = new RecentlyDeletedQueue();
-        this.theme = "DarkTheme.css";
-    }
-
-```
-###### /java/seedu/address/logic/LogicManager.java
-``` java
-            command.setData(model, history, undoRedoStack, queue, theme);
-            if (commandText.equals("theme")) {
-                String newTheme = theme;
-                if (newTheme.equals("DarkTheme.css")) {
-                    theme = "LightTheme.css";
-                } else {
-                    theme = "DarkTheme.css";
-                }
-            }
-```
-###### /java/seedu/address/storage/AddressBookStorage.java
-``` java
-    void backupAddressBook(ReadOnlyAddressBook addressBook) throws IOException;
-
-}
-```
-###### /java/seedu/address/storage/StorageManager.java
-``` java
-    @Override
-    public void backupAddressBook(ReadOnlyAddressBook addressBook) throws IOException {
-        saveAddressBook(addressBook, addressBookStorage.getAddressBookFilePath() + "-backup.xml");
-    }
-
-```
-###### /java/seedu/address/storage/XmlAddressBookStorage.java
-``` java
-    @Override
-    public void backupAddressBook(ReadOnlyAddressBook addressBook) throws IOException {
-        saveAddressBook(addressBook, filePath + "-backup.xml");
-    }
-
-}
-```
-###### /java/seedu/address/model/AddressBook.java
-``` java
-    /**
-     * Initialises the themes in this {@code AddressBook}.
-     */
-
-    private void initialiseThemes() {
-        themeList.add("DarkTheme.css");
-        themeList.add("LightTheme.css");
-    }
-
-    public ArrayList<String> getThemesList() {
-        return themeList;
-    }
-
 ```
