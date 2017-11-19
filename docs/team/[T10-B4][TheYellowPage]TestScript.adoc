@@ -185,7 +185,7 @@ Type "sort" in the command box.
 
 TheYellowPage will be sorted in alphabetical order.
 
-=== Exit
+=== Exit 
 
 Exits TheYellowPage.
 
