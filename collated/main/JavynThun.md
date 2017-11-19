@@ -1,33 +1,4 @@
 # JavynThun
-###### /java/seedu/address/logic/parser/RemarkCommandParser.java
-``` java
-/**
- * Parser for RemarkCommand
- */
-public class RemarkCommandParser implements Parser<RemarkCommand> {
-
-    /**
-     * Parses the given {@code String} of arguments in the context of the RemarkCommand
-     * and returns an RemarkCommand object for execution
-     * @throws ParseException if the user input does not conform with expected format
-     */
-    public RemarkCommand parse(String args) throws ParseException {
-        requireNonNull(args);
-        ArgumentMultimap argumentMultimap = ArgumentTokenizer.tokenize(args, PREFIX_REMARK);
-
-        Index index;
-        try {
-            index = ParserUtil.parseIndex(argumentMultimap.getPreamble());
-        } catch (IllegalValueException ive) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, RemarkCommand.MESSAGE_USAGE));
-        }
-
-        String remark = argumentMultimap.getValue(PREFIX_REMARK).orElse("");
-
-        return new RemarkCommand(index, new Remark(remark));
-    }
-}
-```
 ###### /java/seedu/address/logic/parser/ParserUtil.java
 ``` java
     /**
@@ -43,15 +14,6 @@ public class RemarkCommandParser implements Parser<RemarkCommand> {
 ###### /java/seedu/address/logic/parser/ParserUtil.java
 ``` java
     /**
-     * Parses a {@code Optional<String> remark} into an {@code Optional<Remark>} if {@code remark} is present.
-     * See header comment of this class regarding the use of {@code Optional} parameters.
-     */
-    public static Optional<Remark> parseRemark(Optional<String> remark) throws IllegalValueException {
-        requireNonNull(remark);
-        return remark.isPresent() ? Optional.of(new Remark(remark.get())) : Optional.empty();
-    }
-
-    /**
      * Parses a {@code Optional<String> website} into an {@code Optional<Website>} if {@code website} is present.
      * See header comment of this class regarding the use of {@code Optional} parameters.
      */
@@ -66,7 +28,6 @@ public class RemarkCommandParser implements Parser<RemarkCommand> {
 ```
 ###### /java/seedu/address/logic/parser/CliSyntax.java
 ``` java
-    public static final Prefix PREFIX_REMARK = new Prefix("r/");
     public static final Prefix PREFIX_WEBSITE = new Prefix("w/");
 ```
 ###### /java/seedu/address/logic/commands/SortCommand.java
@@ -254,41 +215,6 @@ public class Occupation {
 
 }
 ```
-###### /java/seedu/address/model/person/Remark.java
-``` java
-/**
- *  Represents a Person's remark in the address book.
- *  Guarantees: immutable; is always valid
- */
-public class Remark {
-
-    public static final String MESSAGE_REMARK_CONSTRAINTS = "Person remarks can take any values, can even be blank";
-
-    public final String value;
-
-    public Remark(String remark) {
-        requireNonNull(remark);
-        this.value = remark;
-    }
-
-    @Override
-    public String toString() {
-        return value;
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        return other == this // short circuit
-            || (other instanceof Remark //instance of nulls
-                && this.value.equals(((Remark) other).value)); //state check
-    }
-
-    @Override
-    public int hashCode() {
-        return value.hashCode();
-    }
-}
-```
 ###### /java/seedu/address/model/person/Person.java
 ``` java
     public void setOccupation(Occupation occupation) {
@@ -307,20 +233,6 @@ public class Remark {
 ```
 ###### /java/seedu/address/model/person/Person.java
 ``` java
-    public void setRemark(Remark remark) {
-        this.remark.set(requireNonNull(remark));
-    }
-
-    @Override
-    public ObjectProperty<Remark> remarkProperty() {
-        return remark;
-    }
-
-    @Override
-    public Remark getRemark() {
-        return remark.get();
-    }
-
     public void setWebsite(Website website) {
         this.website.set(requireNonNull(website));
     }
